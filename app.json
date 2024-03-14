@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "wave-realm",
+    "name": "Wave Realm",
     "slug": "wave-realm",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,11 +20,17 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#fc94af"
+      },
+      "package": "com.logic_realm.waverealm"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "54ac2c54-51ff-4c81-a754-b404d0d2b637"
+      }
     }
   }
 }
