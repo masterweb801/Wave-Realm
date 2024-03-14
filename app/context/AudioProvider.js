@@ -1,6 +1,6 @@
 import React, { Component, createContext } from 'react'
 import * as MediaLibrary from 'expo-media-library'
-import { Alert, View } from 'react-native'
+import { Alert, View, Text } from 'react-native'
 import { DataProvider } from 'recyclerlistview'
 
 export const AudioContext = createContext()
