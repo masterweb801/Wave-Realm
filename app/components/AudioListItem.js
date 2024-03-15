@@ -2,6 +2,7 @@ import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback } from 're
 import React from 'react'
 import { Entypo } from '@expo/vector-icons';
 import { color } from '../misc/color';
+import { FontAwesome } from '@expo/vector-icons';
 
 const getThumbnailText = (filename) => filename[0]
 
@@ -28,14 +29,17 @@ const convertTime = minutes => {
     }
 };
 
-export const AudioListItem = ({ title, duration, onOptionPress, onAudioPress }) => {
+export const AudioListItem = ({ title, duration, onOptionPress, onAudioPress, isPlaying }) => {
     return (
         <>
             <View style={styles.container}>
                 <TouchableWithoutFeedback onPress={onAudioPress}>
                     <View style={styles.leftContainer}>
-                        <View style={styles.thumlail}>
-                            <Text style={styles.thumlailText}>{getThumbnailText(title).toUpperCase()}</Text>
+                        <View style={!isPlaying ? styles.thumlail : styles.activeThumbnail}>
+                            {
+                                isPlaying ? <FontAwesome name="play" style={styles.activeThumbnailIcon} /> :
+                                    <Text style={styles.thumlailText}>{getThumbnailText(title).toUpperCase()}</Text>
+                            }
                         </View>
                         <View style={styles.titleContainer}>
                             <Text numberOfLines={1} style={styles.title}>{title}</Text>
@@ -84,6 +88,19 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: color.FONT
     },
+    activeThumbnail: {
+        height: 50,
+        flexBasis: 50,
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: color.ACTIVE_BG,
+    },
+    activeThumbnailIcon: {
+        color: color.ACTIVE_FONT,
+        fontSize: 18,
+        fontWeight: "bold"
+    },
     titleContainer: {
         width: width - 180,
         paddingLeft: 10
@@ -91,6 +108,10 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         color: color.FONT
+    },
+    activeTitle: {
+        fontSize: 16,
+        color: color.ACTIVE_BG
     },
     separetor: {
         width: width - 80,
