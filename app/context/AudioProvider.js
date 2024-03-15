@@ -14,10 +14,13 @@ export default class AudioProvider extends Component {
             dataProvider: new DataProvider((r1, r2) => r1 !== r2),
             playbackObj: null,
             soundObj: null,
-            currentAudio: {},
+            currentAudio: { filename: "No Music is Playing ..." },
             isPlaying: false,
-            currentAudioIndex: null
+            currentAudioIndex: null,
+            playbackPosition: null,
+            playbackDuration: null
         }
+        this.totalAudioCount = 0
     }
 
     getAudioFiles = async () => {
@@ -29,6 +32,7 @@ export default class AudioProvider extends Component {
             mediaType: "audio",
             first: files.totalCount
         })
+        this.totalAudioCount = files.totalCount
         this.setState({ ...this.state, dataProvider: dataProvider.cloneWithRows([...audioFiles, ...files.assets]), audioFiles: [...audioFiles, ...files.assets] })
     }
 
@@ -71,7 +75,18 @@ export default class AudioProvider extends Component {
     };
 
     render() {
-        let { audioFiles, dataProvider, permissionError, playbackObj, soundObj, currentAudio, isPlaying, currentAudioIndex } = this.state;
+        let {
+            audioFiles,
+            dataProvider,
+            permissionError,
+            playbackObj,
+            soundObj,
+            currentAudio,
+            isPlaying,
+            currentAudioIndex,
+            playbackPosition,
+            playbackDuration
+        } = this.state;
         if (permissionError) {
             return (
                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -82,7 +97,19 @@ export default class AudioProvider extends Component {
             )
         }
         return (
-            <AudioContext.Provider value={{ audioFiles, dataProvider, playbackObj, soundObj, currentAudio, updateState: this.updateState, isPlaying, currentAudioIndex }}>
+            <AudioContext.Provider value={{
+                audioFiles,
+                dataProvider,
+                playbackObj,
+                soundObj,
+                currentAudio,
+                updateState: this.updateState,
+                isPlaying,
+                currentAudioIndex,
+                totalAudioCount: this.totalAudioCount,
+                playbackPosition,
+                playbackDuration
+            }}>
                 {this.props.children}
             </AudioContext.Provider>
         )
