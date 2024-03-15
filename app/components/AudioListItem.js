@@ -29,17 +29,18 @@ const convertTime = minutes => {
     }
 };
 
-export const AudioListItem = ({ title, duration, onOptionPress, onAudioPress, isPlaying }) => {
+export const AudioListItem = ({ title, duration, onOptionPress, onAudioPress, isPlaying, activeListItem }) => {
     return (
         <>
             <View style={styles.container}>
                 <TouchableWithoutFeedback onPress={onAudioPress}>
                     <View style={styles.leftContainer}>
-                        <View style={!isPlaying ? styles.thumlail : styles.activeThumbnail}>
-                            {
-                                isPlaying ? <FontAwesome name="play" style={styles.activeThumbnailIcon} /> :
-                                    <Text style={styles.thumlailText}>{getThumbnailText(title).toUpperCase()}</Text>
-                            }
+                        <View style={!activeListItem ? styles.thumlail : styles.activeThumbnail}>
+                            {!activeListItem ? <Text style={styles.thumlailText}>{getThumbnailText(title).toUpperCase()}</Text> :
+                                <>{
+                                    !isPlaying ? <FontAwesome name="play" style={styles.activeThumbnailIcon} /> :
+                                        <FontAwesome name="pause" style={styles.activeThumbnailIcon} />
+                                }</>}
                         </View>
                         <View style={styles.titleContainer}>
                             <Text numberOfLines={1} style={styles.title}>{title}</Text>
