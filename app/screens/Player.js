@@ -11,6 +11,15 @@ const { width } = Dimensions.get('window');
 
 const Player = () => {
     const context = useContext(AudioContext)
+    const { playbackPosition, playbackDuration } = context
+
+    const calculateSeekBar = () => {
+        if (playbackPosition !== null && playbackDuration !== null) {
+            return playbackPosition / playbackDuration
+        } else {
+            return 0
+        }
+    }
 
     return <Screen>
         <View style={styles.container}>
@@ -22,6 +31,7 @@ const Player = () => {
                 <Text numberOfLines={1} style={styles.audioTitle}>{context.currentAudio.filename}</Text>
                 <Slider
                     style={{ width: width, height: 40 }}
+                    value={calculateSeekBar()}
                     minimumValue={0}
                     maximumValue={1}
                     minimumTrackTintColor={color.FONT_MEDIUM}

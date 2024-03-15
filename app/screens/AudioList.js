@@ -31,6 +31,15 @@ export default class AudioList extends Component {
         }
     })
 
+    onPlaybackStatusUpdate = (status) => {
+        if (status.isLoaded && status.isPlaying) {
+            this.context.updateState(this.context, {
+                playbackPosition: status.positionMillis,
+                playbackDuration: status.durationMillis
+            })
+        }
+    }
+
     handleAudioPress = async (audio) => {
         const { soundObj, playbackObj, currentAudio, updateState, audioFiles } = this.context
         if (soundObj === null) {
@@ -38,6 +47,7 @@ export default class AudioList extends Component {
             let status = await play(playbackObj, audio.uri)
             const index = audioFiles.indexOf(audio)
             updateState(this.context, { currentAudio: audio, playbackObj: playbackObj, soundObj: status, isPlaying: true, currentAudioIndex: index })
+            playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
         } else if (soundObj.isLoaded && soundObj.isPlaying && currentAudio.id === audio.id) {
             let status = await pause(playbackObj)
             updateState(this.context, { soundObj: status, isPlaying: false })
