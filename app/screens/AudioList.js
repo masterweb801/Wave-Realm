@@ -7,6 +7,7 @@ import Screen from '../components/Screen';
 import OptionModal from '../components/OptionModal';
 import { Audio } from 'expo-av'
 import { pause, play, resume, another } from '../misc/audioController';
+import { storeAudio } from '../misc/helper';
 
 export default class AudioList extends Component {
     static contextType = AudioContext;
@@ -31,12 +32,28 @@ export default class AudioList extends Component {
         }
     })
 
-    onPlaybackStatusUpdate = (status) => {
-        if (status.isLoaded && status.isPlaying) {
-            this.context.updateState(this.context, {
-                playbackPosition: status.positionMillis,
-                playbackDuration: status.durationMillis
-            })
+    onPlaybackStatusUpdate = async (status) => {
+        // if (status.isLoaded && status.isPlaying) {
+        //     this.context.updateState(this.context, {
+        //         playbackPosition: status.positionMillis,
+        //         playbackDuration: status.durationMillis
+        //     })
+        // } else
+
+        if (status.didJustFinish) {
+            let nextAudioIndex = this.context.currentAudioIndex + 1
+            let files = this.context.audioFiles
+            if ((files.length - 1) >= nextAudioIndex) {
+                let nextAudio = files[nextAudioIndex]
+                let status = await another(this.context.playbackObj, nextAudio.uri)
+                this.context.updateState(this.context, { currentAudio: nextAudio, soundObj: status, isPlaying: true, currentAudioIndex: nextAudioIndex })
+                await storeAudio(nextAudio, nextAudioIndex)
+            } else {
+                let nextAudio = files[0]
+                let status = await another(this.context.playbackObj, nextAudio.uri)
+                this.context.updateState(this.context, { currentAudio: nextAudio, soundObj: status, isPlaying: true, currentAudioIndex: 0 })
+                await storeAudio(nextAudio, 0)
+            }
         }
     }
 
@@ -48,6 +65,7 @@ export default class AudioList extends Component {
             const index = audioFiles.indexOf(audio)
             updateState(this.context, { currentAudio: audio, playbackObj: playbackObj, soundObj: status, isPlaying: true, currentAudioIndex: index })
             playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
+            await storeAudio(audio, index)
         } else if (soundObj.isLoaded && soundObj.isPlaying && currentAudio.id === audio.id) {
             let status = await pause(playbackObj)
             updateState(this.context, { soundObj: status, isPlaying: false })
@@ -58,6 +76,7 @@ export default class AudioList extends Component {
             const status = await another(playbackObj, audio.uri)
             const index = audioFiles.indexOf(audio)
             updateState(this.context, { currentAudio: audio, soundObj: status, isPlaying: true, currentAudioIndex: index })
+            await storeAudio(audio, index)
         }
     }
 
@@ -68,15 +87,21 @@ export default class AudioList extends Component {
         }} />
     }
 
+    componentDidMount() {
+        this.context.loadPreviousAudio()
+    }
+
     render() {
         return <AudioContext.Consumer>
             {({ dataProvider, isPlaying }) => {
-                return (
-                    <Screen>
-                        <RecyclerListView dataProvider={dataProvider} layoutProvider={this.layoutProvider} rowRenderer={this.rowRender} extendedState={{ isPlaying }} />
-                        <OptionModal onPlayPress={() => console.log("Playing Audio")} onPlayListPress={() => console.log("Added to PlayList")} item={this.currentItem} closeModal={() => this.setState({ ...this.props, modal: false })} visible={this.state.modal} />
-                    </Screen>
-                )
+                if (dataProvider._data.length) {
+                    return (
+                        <Screen>
+                            <RecyclerListView dataProvider={dataProvider} layoutProvider={this.layoutProvider} rowRenderer={this.rowRender} extendedState={{ isPlaying }} />
+                            <OptionModal onPlayPress={() => console.log("Playing Audio")} onPlayListPress={() => console.log("Added to PlayList")} item={this.currentItem} closeModal={() => this.setState({ ...this.props, modal: false })} visible={this.state.modal} />
+                        </Screen>
+                    )
+                } else return null
             }}
         </AudioContext.Consumer>
     }

@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, Dimensions } from 'react-native'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Screen from '../components/Screen'
 import { color } from '../misc/color'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -21,7 +21,11 @@ const Player = () => {
         }
     }
 
-    return <Screen>
+    useEffect(() => {
+        context.loadPreviousAudio()
+    }, [])
+
+    if (context.currentAudio) return <Screen>
         <View style={styles.container}>
             <Text style={styles.audioCount}>{`${context.currentAudioIndex + 1} / ${context.totalAudioCount}`}</Text>
             <View style={styles.midBannerContainer}>
