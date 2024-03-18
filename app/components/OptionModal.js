@@ -2,7 +2,7 @@ import { Modal, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-n
 import React from 'react'
 import { color } from '../misc/color'
 
-const OptionModal = ({ visible, closeModal, item, onPlayPress, onPlayListPress, PP = true }) => {
+const OptionModal = ({ visible, closeModal, item, onPlayPress, PP = true }) => {
   return (
     <>
       <Modal animationType='slide' transparent visible={visible} >
@@ -11,9 +11,6 @@ const OptionModal = ({ visible, closeModal, item, onPlayPress, onPlayListPress, 
           <View style={styles.optionContainer}>
             <TouchableWithoutFeedback onPress={onPlayPress}>
               <Text style={styles.option}>{PP ? "Play" : "Pause"}</Text>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={onPlayListPress}>
-              <Text style={styles.option}>Add to PlayList</Text>
             </TouchableWithoutFeedback>
           </View>
         </View>

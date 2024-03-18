@@ -3,7 +3,7 @@ import * as MediaLibrary from 'expo-media-library'
 import { Alert, View, Text } from 'react-native'
 import { DataProvider } from 'recyclerlistview'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Audio } from 'expo-av'
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av'
 import { storeAudio } from '../misc/helper'
 
 export const AudioContext = createContext()
@@ -114,6 +114,15 @@ export default class AudioProvider extends Component {
         if (this.state.playbackObj === null) {
             this.setState({ ...this.state, playbackObj: new Audio.Sound() })
         }
+        Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+            staysActiveInBackground: true,
+            interruptionModeIOS: InterruptionModeIOS.DuckOthers,
+            playsInSilentModeIOS: true,
+            shouldDuckAndroid: true,
+            interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+            playThroughEarpieceAndroid: false
+        });
     }
 
     updateState = (prevState, newState = {}) => {

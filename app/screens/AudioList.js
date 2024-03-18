@@ -78,9 +78,6 @@ export default class AudioList extends Component {
                                     this.handleAudioPress(this.currentItem)
                                     this.setState({ ...this.props, modal: false })
                                 }}
-                                onPlayListPress={() => {
-                                    console.log("Added to PlayList")
-                                }}
                                 item={this.currentItem}
                                 closeModal={() => this.setState({ ...this.props, modal: false })}
                                 visible={this.state.modal}

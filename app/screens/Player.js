@@ -113,14 +113,14 @@ const Player = () => {
             </View>
             <View style={styles.audioPlayerContainer}>
                 <Text numberOfLines={1} style={styles.audioTitle}>{context.currentAudio.filename}</Text>
-                <Slider
+                {/* <Slider
                     style={{ width: width, height: 40 }}
                     value={calculateSeekBar()}
                     minimumValue={0}
                     maximumValue={1}
                     minimumTrackTintColor={color.FONT_MEDIUM}
                     maximumTrackTintColor={color.ACTIVE_BG}
-                />
+                /> */}
                 <View style={styles.audioControllers}>
                     <PlayerButton iconType={"prev"} onPress={handelPrevious} />
                     <PlayerButton iconType={context.isPlaying ? "play" : "pause"} style={{ marginHorizontal: 25 }} onPress={handelPlayPause} />
@@ -141,6 +141,8 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         color: color.FONT_LIGHT,
         fontSize: 14,
+        marginRight: 15,
+        marginTop: 15
     },
     midBannerContainer: {
         flex: 1,
@@ -150,13 +152,14 @@ const styles = StyleSheet.create({
     audioTitle: {
         fontSize: 16,
         color: color.FONT,
-        padding: 15,
+        padding: 20,
     },
     audioControllers: {
         width,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: 20,
+        paddingBottom: 50,
+        paddingTop: 20,
     },
 });
