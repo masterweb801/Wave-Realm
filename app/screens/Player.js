@@ -3,17 +3,15 @@ import React, { useContext, useEffect } from 'react'
 import Screen from '../components/Screen'
 import { color } from '../misc/color'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Slider from '@react-native-community/slider';
+// import Slider from '@react-native-community/slider';
 import PlayerButton from '../components/PlayerButton';
 import { AudioContext } from '../context/AudioProvider'
-import { play, pause, resume, another } from '../misc/audioController';
-import { storeAudio } from '../misc/helper';
 
 const { width } = Dimensions.get('window');
 
 const Player = () => {
     const context = useContext(AudioContext)
-    const { playbackPosition, playbackDuration } = context
+    // const { playbackPosition, playbackDuration } = context
 
     // const calculateSeekBar = () => {
     //     if (playbackPosition !== null && playbackDuration !== null) {

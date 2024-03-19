@@ -37,6 +37,7 @@ export default class AudioList extends Component {
         if (soundObj === null) {
             const playbackObj = new Audio.Sound()
             let status = await play(playbackObj, audio.uri)
+            await this.context.notify("Now Playing ...", audio.filename)
             const index = audioFiles.indexOf(audio)
             updateState(this.context, { currentAudio: audio, playbackObj: playbackObj, soundObj: status, isPlaying: true, currentAudioIndex: index })
             playbackObj.setOnPlaybackStatusUpdate(this.context.onPlaybackStatusUpdate)
@@ -49,6 +50,8 @@ export default class AudioList extends Component {
             updateState(this.context, { soundObj: status, isPlaying: true })
         } else if (soundObj.isLoaded && currentAudio.id !== audio.id) {
             const status = await another(playbackObj, audio.uri)
+            await this.context.denotify()
+            await this.context.notify("Now Playing ...", audio.filename)
             const index = audioFiles.indexOf(audio)
             updateState(this.context, { currentAudio: audio, soundObj: status, isPlaying: true, currentAudioIndex: index })
             await storeAudio(audio, index)
