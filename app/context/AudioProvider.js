@@ -5,7 +5,7 @@ import { DataProvider } from 'recyclerlistview'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av'
 import { storeAudio } from '../misc/helper'
-import { another } from '../misc/audioController'
+import { play, pause, resume, another } from '../misc/audioController'
 
 export const AudioContext = createContext()
 
@@ -94,8 +94,30 @@ export default class AudioProvider extends Component {
         //     })
         // } else
         if (status.didJustFinish) {
-            let nextAudioIndex = this.state.currentAudioIndex + 1
-            let files = this.state.audioFiles
+            await this.handelNext()
+        }
+    }
+
+    handelPlayPause = async () => {
+        if (this.state.soundObj === null) {
+            let audio = this.state.currentAudio
+            let status = await play(this.state.playbackObj, audio.uri)
+            this.updateState(this.state, { currentAudio: audio, soundObj: status, isPlaying: true, currentAudioIndex: this.state.currentAudioIndex })
+            this.state.playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
+        } else if (this.state.soundObj.isLoaded && this.state.soundObj.isPlaying) {
+            let status = await pause(this.state.playbackObj)
+            this.updateState(this.state, { soundObj: status, isPlaying: false })
+        } else if (this.state.soundObj.isLoaded && !this.state.soundObj.isPlaying) {
+            let status = await resume(this.state.playbackObj)
+            this.updateState(this.state, { soundObj: status, isPlaying: true })
+        }
+    }
+
+    handelNext = async () => {
+        let nextAudioIndex = this.state.currentAudioIndex + 1
+        let files = this.state.audioFiles
+
+        if (this.state.soundObj !== null) {
             if ((files.length - 1) >= nextAudioIndex) {
                 let nextAudio = files[nextAudioIndex]
                 let status = await another(this.state.playbackObj, nextAudio.uri)
@@ -106,6 +128,50 @@ export default class AudioProvider extends Component {
                 let status = await another(this.state.playbackObj, nextAudio.uri)
                 this.updateState(this.state, { currentAudio: nextAudio, soundObj: status, isPlaying: true, currentAudioIndex: 0, playbackPosition: null, playbackDuration: null })
                 await storeAudio(nextAudio, 0)
+            }
+        } else {
+            if ((files.length - 1) >= nextAudioIndex) {
+                let nextAudio = files[nextAudioIndex]
+                let status = await play(this.state.playbackObj, nextAudio.uri)
+                this.updateState(this.state, { currentAudio: nextAudio, soundObj: status, isPlaying: true, currentAudioIndex: nextAudioIndex, playbackPosition: null, playbackDuration: null })
+                await storeAudio(nextAudio, nextAudioIndex)
+            } else {
+                let nextAudio = files[0]
+                let status = await play(this.state.playbackObj, nextAudio.uri)
+                this.updateState(this.state, { currentAudio: nextAudio, soundObj: status, isPlaying: true, currentAudioIndex: 0, playbackPosition: null, playbackDuration: null })
+                await storeAudio(nextAudio, 0)
+            }
+        }
+    }
+
+    handelPrevious = async () => {
+        let prevAudioIndex = this.state.currentAudioIndex - 1
+        let files = this.state.audioFiles
+        if (this.state.soundObj !== null) {
+            if (0 <= prevAudioIndex) {
+                let prevAudio = files[prevAudioIndex]
+                let status = await another(this.state.playbackObj, prevAudio.uri)
+                this.updateState(this.state, { currentAudio: prevAudio, soundObj: status, isPlaying: true, currentAudioIndex: prevAudioIndex, playbackPosition: null, playbackDuration: null })
+                await storeAudio(prevAudio, prevAudioIndex)
+            } else {
+                let index = files.length - 1
+                let prevAudio = files[index]
+                let status = await another(this.state.playbackObj, prevAudio.uri)
+                this.updateState(this.state, { currentAudio: prevAudio, soundObj: status, isPlaying: true, currentAudioIndex: index, playbackPosition: null, playbackDuration: null })
+                await storeAudio(prevAudio, index)
+            }
+        } else {
+            if (0 <= prevAudioIndex) {
+                let prevAudio = files[prevAudioIndex]
+                let status = await play(this.state.playbackObj, prevAudio.uri)
+                this.updateState(this.state, { currentAudio: prevAudio, soundObj: status, isPlaying: true, currentAudioIndex: prevAudioIndex, playbackPosition: null, playbackDuration: null })
+                await storeAudio(prevAudio, prevAudioIndex)
+            } else {
+                let index = files.length - 1
+                let prevAudio = files[index]
+                let status = await play(this.state.playbackObj, prevAudio.uri)
+                this.updateState(this.state, { currentAudio: prevAudio, soundObj: status, isPlaying: true, currentAudioIndex: index, playbackPosition: null, playbackDuration: null })
+                await storeAudio(prevAudio, index)
             }
         }
     }
@@ -167,6 +233,9 @@ export default class AudioProvider extends Component {
                 playbackDuration,
                 loadPreviousAudio: this.loadPreviousAudio,
                 onPlaybackStatusUpdate: this.onPlaybackStatusUpdate,
+                handelPlayPause: this.handelPlayPause,
+                handelPrevious: this.handelPrevious,
+                handelNext: this.handelNext,
             }}>
                 {this.props.children}
             </AudioContext.Provider>

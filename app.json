@@ -2,7 +2,7 @@
   "expo": {
     "name": "Wave Realm",
     "slug": "wave-realm",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -23,9 +23,6 @@
         "backgroundColor": "#fc94af"
       },
       "package": "com.logic_realm.waverealm"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {

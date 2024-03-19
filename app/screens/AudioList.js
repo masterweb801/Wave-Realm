@@ -81,7 +81,7 @@ export default class AudioList extends Component {
                                 item={this.currentItem}
                                 closeModal={() => this.setState({ ...this.props, modal: false })}
                                 visible={this.state.modal}
-                                PP={!isPlaying}
+                                PP={this.currentItem.id === this.context.currentAudio.id ? !isPlaying : true}
                             />
                         </Screen>
                     )
